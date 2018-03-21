@@ -11,6 +11,7 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
 from utils import *
 from config import get_config
+import h5py
 
 def main(config):
 
@@ -20,7 +21,17 @@ def main(config):
     prepare_dirs(config)
 
     # load data
-    X_train, y_train, _, _ = load_data(config.data_dir)
+
+
+    with h5py.File('data4torch.h5', 'r') as hf:
+        X_train = hf['data'][:]
+
+    with h5py.File('data4torch.h5', 'r') as hf:
+        y_train = hf['labels'][:]
+
+
+    # convert image data to float64 matrix. float64 is need for bh_sne
+    X_train = np.asarray(X_train).astype('float64')    
 
     # shuffle dataset
     if config.shuffle:
